@@ -4,6 +4,8 @@ Git status header for yazi inspired by [powerlevel10k](https://github.com/romkat
 
 ![preview](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview.png)
 
+All supported features are listed [here](#features)
+
 ## Requirements
 
 - yazi version >= 0.3.0
@@ -55,6 +57,16 @@ require("githead"):setup({
 ```
 
 ## Features
+
+- [x] Current branch (or current commit if branch is not presented)
+- [x] Stashes
+- [x] State (merge or rebase)
+  - [ ] Rebase entry counter
+- [x] Staged
+- [x] Unstaged
+- [x] Untracked
+
+### Under the hood
 
 The goal is to use minimum amount of shell commands.
 

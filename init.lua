@@ -45,7 +45,7 @@ function setup(_, options)
     branch = status:match("On branch (%S+)")
 
     if branch == nil then
-      local commit = status:match("on '(%S+)'")
+      local commit = status:match("onto (%S+)") or status:match("detached at (%S+)")
 
       if commit == nil then
         return ""

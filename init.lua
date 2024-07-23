@@ -9,7 +9,6 @@ function setup(_, options)
     branch_borders = options.branch_borders or "()",
 
     commit_color = options.commit_color or "bright magenta",
-    show_commit_symbol = options.show_commit_symbol == nil and true or options.show_commit_symbol,
     commit_symbol = options.commit_symbol or "@",
 
     show_stashes = options.show_stashes == nil and true or options.show_stashes,
@@ -51,8 +50,11 @@ function setup(_, options)
       if commit == nil then
         return ""
       else
+        local branch_prefix = config.branch_prefix == "" and " " or " " .. config.branch_prefix .. " "
+        local commit_prefix = config.commit_symbol == "" and "" or config.commit_symbol
+
         return ui.Line {
-          ui.Span(" on " .. (config.show_commit_symbol and config.commit_symbol or "")),
+          ui.Span(branch_prefix .. commit_prefix),
           ui.Span(commit):fg(config.commit_color)
         }
       end

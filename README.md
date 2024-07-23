@@ -34,13 +34,22 @@ Optionally, configure header:
 ```lua
 require("githead"):setup({
   show_branch = true,
+  branch_prefix = "on",
   branch_color = "blue",
   branch_symbol = "",
   branch_borders = "()",
 
+  commit_color = "bright magenta",
+  commit_symbol = "@",
+
   show_stashes = true,
   stashes_color = "bright magenta",
   stashes_symbol = "$",
+
+  show_state = true,
+  show_state_prefix = true,
+  state_color = "red",
+  state_symbol = "~",
 
   show_staged = true,
   staged_color = "bright yellow",

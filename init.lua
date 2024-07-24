@@ -1,4 +1,4 @@
-function setup(_, options)
+local function setup(_, options)
   options = options or {}
 
   local config = {
@@ -42,7 +42,7 @@ function setup(_, options)
   end
 
   function Header:get_branch(status)
-    branch = status:match("On branch (%S+)")
+    local branch = status:match("On branch (%S+)")
 
     if branch == nil then
       local commit = status:match("onto (%S+)") or status:match("detached at (%S+)")
@@ -59,8 +59,8 @@ function setup(_, options)
         }
       end
     else
-      local left_border = string.sub(config.branch_borders, 1, 1)
-      local right_border = string.sub(config.branch_borders, 2, 2)
+      local left_border = config.branch_borders:sub(1, 1)
+      local right_border = config.branch_borders:sub(2, 2)
 
       local branch_string = ""
 
@@ -86,9 +86,9 @@ function setup(_, options)
   end
 
   function Header:get_state(status)
-    local result = string.match(status, "Unmerged paths:%s*(.-)%s*\n\n")
+    local result = status:match("Unmerged paths:%s*(.-)%s*\n\n")
     if result then
-      local filtered_result = result:gsub("^[%s]*%b()[%s]*", "")
+      local filtered_result = result:gsub("^[%s]*%b()[%s]*", ""):gsub("^[%s]*%b()[%s]*", "")
 
       local unmerged = 0
       for line in filtered_result:gmatch("[^\r\n]+") do
@@ -97,7 +97,24 @@ function setup(_, options)
         end
       end
 
-      local state_name = config.show_state_prefix and (status:find("You are currently rebasing") and "rebase " or "merge ") or ""
+      local state_name = ""
+
+      if config.show_state_prefix then
+        if status:find("git merge") then
+          state_name = "merge "
+        elseif status:find("git cherry%-pick") then
+          state_name = "cherry "
+        elseif status:find("git rebase") then
+          state_name = "rebase "
+
+          if status:find("done") then
+            local done = status:match("%((%d+) com.- done%)") or ""
+            state_name = state_name .. done .. "/" .. unmerged .. " "
+          end
+        else
+          state_name = ""
+        end
+      end
 
       return ui.Span(" " .. state_name .. config.state_symbol .. unmerged):fg(config.state_color)
     else
@@ -106,7 +123,7 @@ function setup(_, options)
   end
 
   function Header:get_staged(status)
-    local result = string.match(status, "Changes to be committed:%s*(.-)%s*\n\n")
+    local result = status:match("Changes to be committed:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[%s]*", "")
 
@@ -124,7 +141,7 @@ function setup(_, options)
   end
 
   function Header:get_unstaged(status)
-    local result = string.match(status, "Changes not staged for commit:%s*(.-)%s*\n\n")
+    local result = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[\r\n]*", ""):gsub("^[%s]*%b()[\r\n]*", "")
 
@@ -142,14 +159,14 @@ function setup(_, options)
   end
 
   function Header:get_untracked(status)
-    local result = string.match(status, "Untracked files:%s*(.-)%s*\n\n")
+    local result = status:match("Untracked files:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[\r\n]*", "")
 
       local untracked = 0
       for line in filtered_result:gmatch("[^\r\n]+") do
         if line:match("%S") then
-            untracked = untracked + 1
+          untracked = untracked + 1
         end
       end
 
@@ -180,7 +197,7 @@ function setup(_, options)
   end
 
   Header._left = {
-    { Header.cwd, id = 1, order = 1000 },
+    { Header.cwd,     id = 1, order = 1000 },
     { Header.githead, id = 2, order = 2000 },
   }
 end

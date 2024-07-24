@@ -69,8 +69,10 @@ require("githead"):setup({
 
 - [x] Current branch (or current commit if branch is not presented)
 - [x] Stashes
-- [x] State (merge or rebase)
-  - [ ] Rebase entry counter
+- [x] States
+  - [x] merge
+  - [x] cherry
+  - [x] rebase (+ done counter)
 - [x] Staged
 - [x] Unstaged
 - [x] Untracked

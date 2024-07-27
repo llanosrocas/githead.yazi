@@ -195,11 +195,8 @@ local function setup(_, options)
       untracked,
     }
   end
-
-  Header._left = {
-    { Header.cwd,     id = 1, order = 1000 },
-    { Header.githead, id = 2, order = 2000 },
-  }
+  
+  Header:children_add(Header.githead, 1234, Header.LEFT)
 end
 
 return { setup = setup }

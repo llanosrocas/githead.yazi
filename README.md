@@ -23,6 +23,9 @@ Or manually copy `init.lua` to the `~/.config/yazi/plugins/githead.yazi/init.lua
 
 Add this to your `~/.config/yazi/init.lua`:
 
+> [!IMPORTANT]
+> If you are using yatline.yazi, put this after its initialization.
+
 ```lua
 require("githead"):setup()
 ```
@@ -62,6 +65,46 @@ require("githead"):setup({
   show_untracked = true,
   untracked_color = "blue",
   untracked_symbol = "?",
+})
+```
+
+You can also use a [theme](https://github.com/imsi32/yatline-themes):
+
+```lua
+local your_theme = {
+  branch_color = "blue",
+  commit_color = "bright magenta",
+  stashes_color = "bright magenta",
+  state_color = "red",
+  staged_color = "bright yellow",
+  unstaged_color = "bright yellow",
+  untracked_color = "blue",
+}
+
+require("githead"):setup({
+-- ===
+    
+  theme = your_theme,
+
+-- ===
+})
+```
+
+If you are using yatline.yazi, you can use these components:
+
+``` lua
+-- ===
+
+  {type = "coloreds", custom = false, name = "branch"},
+  {type = "coloreds", custom = false, name = "stashes"},
+  {type = "coloreds", custom = false, name = "state"},
+  {type = "coloreds", custom = false, name = "staged"},
+  {type = "coloreds", custom = false, name = "unstaged"},
+  {type = "coloreds", custom = false, name = "untracked"},
+
+  {type = "coloreds", custom = false, name = "githead"},
+
+-- ===
 })
 ```
 

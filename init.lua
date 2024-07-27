@@ -34,7 +34,8 @@ local function setup(_, options)
   }
 
   function Header:get_status()
-    local handle = io.popen("git status --ignore-submodules=dirty --branch --show-stash --ahead-behind 2>/dev/null")
+    -- Instead of LANGUAGE, you can try LANG, LC_ALL. If the plugin does not show up.
+    local handle = io.popen("LANGUAGE=en_US.UTF-8 git status --ignore-submodules=dirty --branch --show-stash --ahead-behind 2>/dev/null")
     local status = handle:read("*a")
     handle:close()
 

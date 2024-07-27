@@ -196,7 +196,7 @@ local function setup(_, options)
     }
   end
   
-  Header:children_add(Header.githead, 1234, Header.LEFT)
+  Header:children_add(Header.githead, 2000, Header.LEFT)
 end
 
 return { setup = setup }

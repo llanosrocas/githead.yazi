@@ -63,7 +63,7 @@ local function setup(_, options)
         local branch_prefix = config.branch_prefix == "" and " " or " " .. config.branch_prefix .. " "
         local commit_prefix = config.commit_symbol == "" and "" or config.commit_symbol
 
-        return { branch_prefix .. commit_prefix, commit }
+        return { "commit", branch_prefix .. commit_prefix, commit }
       end
     else
       local left_border = config.branch_borders:sub(1, 1)
@@ -79,7 +79,7 @@ local function setup(_, options)
 
       local branch_prefix = config.branch_prefix == "" and " " or " " .. config.branch_prefix .. " "
 
-      return { branch_prefix, branch_string }
+      return { "branch", branch_prefix, branch_string }
     end
   end
 
@@ -183,8 +183,8 @@ local function setup(_, options)
   function Header:githead()
     local status = get_status()
     local branch_array = get_branch(status)
-    local prefix = ui.Span(config.show_branch and branch_array[1] or ""):fg(theme.prefix_color)
-    local branch = ui.Span(config.show_branch and branch_array[2] or ""):fg(theme.branch_color)
+    local prefix = ui.Span(config.show_branch and branch_array[2] or ""):fg(theme.prefix_color)
+    local branch = ui.Span(config.show_branch and branch_array[3] or ""):fg(branch_array[1] == "commit" and theme.commit_color or theme.branch_color)
     local stashes = ui.Span(config.show_stashes and get_stashes(status) or ""):fg(theme.stashes_color)
     local state = ui.Span(config.show_state and get_state(status) or ""):fg(theme.state_color)
     local staged = ui.Span(config.show_staged and get_staged(status) or ""):fg(theme.staged_color)
@@ -203,8 +203,12 @@ local function setup(_, options)
 
       local branch = config.show_branch and get_branch(status) or ""
       if branch ~= nil and branch ~= "" then
-        table.insert(githead, { branch[1], theme.prefix_color })
-        table.insert(githead, { branch[2], theme.branch_color })
+        table.insert(githead, { branch[2], theme.prefix_color })
+	if branch[1] == "commit" then
+          table.insert(githead, { branch[3], theme.commit_color })
+	else
+          table.insert(githead, { branch[3], theme.branch_color })
+	end
       end
 
       local stashes = config.show_stashes and get_stashes(status) or ""

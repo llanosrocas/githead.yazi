@@ -38,6 +38,7 @@ Optionally, configure header:
 require("githead"):setup({
   show_branch = true,
   branch_prefix = "on",
+  prefix_color = "white"
   branch_color = "blue",
   branch_symbol = "",
   branch_borders = "()",
@@ -72,6 +73,7 @@ You can also use a [theme](https://github.com/imsi32/yatline-themes):
 
 ```lua
 local your_theme = {
+  prefix_color = "white"
   branch_color = "blue",
   commit_color = "bright magenta",
   stashes_color = "bright magenta",
@@ -90,17 +92,10 @@ require("githead"):setup({
 })
 ```
 
-If you are using yatline.yazi, you can use these components:
+If you are using yatline.yazi, you can use this component:
 
 ``` lua
 -- ===
-
-  {type = "coloreds", custom = false, name = "branch"},
-  {type = "coloreds", custom = false, name = "stashes"},
-  {type = "coloreds", custom = false, name = "state"},
-  {type = "coloreds", custom = false, name = "staged"},
-  {type = "coloreds", custom = false, name = "unstaged"},
-  {type = "coloreds", custom = false, name = "untracked"},
 
   {type = "coloreds", custom = false, name = "githead"},
 

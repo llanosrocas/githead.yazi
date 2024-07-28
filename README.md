@@ -100,7 +100,6 @@ If you are using yatline.yazi, you can use this component:
   {type = "coloreds", custom = false, name = "githead"},
 
 -- ===
-})
 ```
 
 ## Features

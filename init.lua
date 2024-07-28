@@ -1,3 +1,14 @@
+local get_status = ya.sync(function()
+  local command =
+  "LANGUAGE=en_US.UTF-8 git status --ignore-submodules=dirty --branch --show-stash --ahead-behind 2>/dev/null"
+
+  local handle = io.popen(command)
+  local status = handle:read("*a")
+  handle:close()
+
+  return status
+end)
+
 local function setup(_, options)
   options = options or {}
 
@@ -32,15 +43,6 @@ local function setup(_, options)
     untracked_color = options.untracked_color or "blue",
     untracked_symbol = options.untracked_symbol or "?",
   }
-
-  function Header:get_status()
-    -- Instead of LANGUAGE, you can try LANG, LC_ALL. If the plugin does not show up.
-    local handle = io.popen("LANGUAGE=en_US.UTF-8 git status --ignore-submodules=dirty --branch --show-stash --ahead-behind 2>/dev/null")
-    local status = handle:read("*a")
-    handle:close()
-
-    return status
-  end
 
   function Header:get_branch(status)
     local branch = status:match("On branch (%S+)")
@@ -178,7 +180,7 @@ local function setup(_, options)
   end
 
   function Header:githead()
-    local status = self:get_status()
+    local status = get_status()
 
     local branch = config.show_branch and self:get_branch(status) or ""
     local stashes = config.show_stashes and self:get_stashes(status) or ""
@@ -196,7 +198,7 @@ local function setup(_, options)
       untracked,
     }
   end
-  
+
   Header:children_add(Header.githead, 2000, Header.LEFT)
 end
 

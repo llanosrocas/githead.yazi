@@ -31,6 +31,7 @@ local function setup(_, options)
   end
 
   local theme = {
+    prefix_color = options.prefix_color or "white",
     branch_color = options.branch_color or "blue",
     commit_color = options.commit_color or "bright magenta",
     stashes_color = options.stashes_color or "bright magenta",
@@ -40,11 +41,6 @@ local function setup(_, options)
     untracked_color = options.untracked_color or "blue",
   }
 
-  if Yatline == nil then
-    Yatline = {}
-    Yatline.coloreds = {}
-    Yatline.coloreds.get = {}
-  end
 
   local get_status = ya.sync(function()
     -- Instead of LANGUAGE, you can try LANG, LC_ALL. If the plugin does not show up.
@@ -55,8 +51,7 @@ local function setup(_, options)
     return status
   end)
 
-  function Yatline.coloreds.get:branch()
-    local status = get_status()
+  local function get_branch(status)
     local branch = status:match("On branch (%S+)")
 
     if branch == nil then
@@ -65,10 +60,10 @@ local function setup(_, options)
       if commit == nil then
         return ""
       else
-        local branch_prefix = config.branch_prefix == "" and "" or config.branch_prefix .. " "
+        local branch_prefix = config.branch_prefix == "" and " " or " " .. config.branch_prefix .. " "
         local commit_prefix = config.commit_symbol == "" and "" or config.commit_symbol
 
-        return {{ " " .. branch_prefix .. commit_prefix .. commit .. " ", theme.commit_color }}
+        return { branch_prefix .. commit_prefix, commit }
       end
     else
       local left_border = config.branch_borders:sub(1, 1)
@@ -82,20 +77,19 @@ local function setup(_, options)
         branch_string = left_border .. config.branch_symbol .. " " .. branch .. right_border
       end
 
-      local branch_prefix = config.branch_prefix == "" and "" or config.branch_prefix .. " "
+      local branch_prefix = config.branch_prefix == "" and " " or " " .. config.branch_prefix .. " "
 
-      return {{ " " .. branch_prefix .. branch_string .. " ", theme.branch_color }}
+      return { branch_prefix, branch_string }
     end
   end
 
-  function Yatline.coloreds.get:stashes()
-    local stashes = tonumber(get_status():match("Your stash currently has (%S+)"))
+  local function get_stashes(status)
+    local stashes = tonumber(status:match("Your stash currently has (%S+)"))
 
-    return stashes ~= nil and {{ " " .. config.stashes_symbol .. stashes .. " ", theme.stashes_color }} or ""
+    return stashes ~= nil and " " .. config.stashes_symbol .. stashes or ""
   end
 
-  function Yatline.coloreds.get:state()
-    local status = get_status()
+  local function get_state(status)
     local result = status:match("Unmerged paths:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[%s]*", ""):gsub("^[%s]*%b()[%s]*", "")
@@ -126,14 +120,14 @@ local function setup(_, options)
         end
       end
 
-      return {{ " " .. state_name .. config.state_symbol .. unmerged .. " ", theme.state_color }}
+      return " " .. state_name .. config.state_symbol .. unmerged
     else
       return ""
     end
   end
 
-  function Yatline.coloreds.get:staged()
-    local result = get_status():match("Changes to be committed:%s*(.-)%s*\n\n")
+  local function get_staged(status)
+    local result = status:match("Changes to be committed:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[%s]*", "")
 
@@ -144,14 +138,14 @@ local function setup(_, options)
         end
       end
 
-      return {{ " " .. config.staged_symbol .. staged .. " ", theme.staged_color }}
+      return " " .. config.staged_symbol .. staged
     else
       return ""
     end
   end
 
-  function Yatline.coloreds.get:unstaged()
-    local result = get_status():match("Changes not staged for commit:%s*(.-)%s*\n\n")
+  local function get_unstaged(status)
+    local result = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[\r\n]*", ""):gsub("^[%s]*%b()[\r\n]*", "")
 
@@ -162,14 +156,14 @@ local function setup(_, options)
         end
       end
 
-      return {{ " " .. config.unstaged_symbol .. unstaged .. " ", theme.unstaged_color }}
+      return " " .. config.unstaged_symbol .. unstaged
     else
       return ""
     end
   end
 
-  function Yatline.coloreds.get:untracked()
-    local result = get_status():match("Untracked files:%s*(.-)%s*\n\n")
+  local function get_untracked(status)
+    local result = status:match("Untracked files:%s*(.-)%s*\n\n")
     if result then
       local filtered_result = result:gsub("^[%s]*%b()[\r\n]*", "")
 
@@ -180,66 +174,72 @@ local function setup(_, options)
         end
       end
 
-      return {{ " " .. config.untracked_symbol .. untracked .. " ", theme.untracked_color }}
+      return " " .. config.untracked_symbol .. untracked
     else
       return ""
-    end
-  end
-
-  function Yatline.coloreds.get:githead()
-    local githead = {}
-
-    local branch = config.show_branch and Yatline.coloreds.get:branch() or ""
-    if branch ~= nil and branch ~= "" then
-      table.insert(githead, branch[1])
-    end
-
-    local stashes = config.show_stashes and Yatline.coloreds.get:stashes() or ""
-    if stashes ~= nil and stashes ~= "" then
-      table.insert(githead, stashes[1])
-    end
-
-    local state = config.show_state and Yatline.coloreds.get:state() or ""
-    if state ~= nil and state ~= "" then
-      table.insert(githead, state[1])
-    end
-
-    local staged = config.show_staged and Yatline.coloreds.get:staged() or ""
-    if staged ~= nil and staged ~= "" then
-      table.insert(githead, staged[1])
-    end
-
-    local unstaged = config.show_unstaged and Yatline.coloreds.get:unstaged() or ""
-    if unstaged ~= nil and unstaged ~= "" then
-      table.insert(githead, unstaged[1])
-    end
-
-    local untracked = config.show_untracked and Yatline.coloreds.get:untracked() or ""
-    if untracked ~= nil and untracked ~= "" then
-      table.insert(githead, untracked[1])
-    end
-
-    if #githead == 0 then
-      return ""
-    else
-      return githead
     end
   end
 
   function Header:githead()
-    local githead = Yatline.coloreds.get:githead()
+    local status = get_status()
+    local branch_array = get_branch(status)
+    local prefix = ui.Span(config.show_branch and branch_array[1] or ""):fg(theme.prefix_color)
+    local branch = ui.Span(config.show_branch and branch_array[2] or ""):fg(theme.branch_color)
+    local stashes = ui.Span(config.show_stashes and get_stashes(status) or ""):fg(theme.stashes_color)
+    local state = ui.Span(config.show_state and get_state(status) or ""):fg(theme.state_color)
+    local staged = ui.Span(config.show_staged and get_staged(status) or ""):fg(theme.staged_color)
+    local unstaged = ui.Span(config.show_unstaged and get_unstaged(status) or ""):fg(theme.unstaged_color)
+    local untracked = ui.Span(config.show_untracked and get_untracked(status) or ""):fg(theme.untracked_color)
 
-    local spans = {}
-    if githead ~= "" then
-      for _, value in ipairs(githead) do
-        table.insert(spans, ui.Span(value[1]):fg(value[2]))
-      end
-    end
-
-    return ui.Line(spans)
+    return ui.Line { prefix, branch, stashes, state, staged, unstaged, untracked }
   end
 
   Header:children_add(Header.githead, 2000, Header.LEFT)
+
+  if Yatline ~= nil then
+    function Yatline.coloreds.get:githead()
+      local status = get_status()
+      local githead = {}
+
+      local branch = config.show_branch and get_branch(status) or ""
+      if branch ~= nil and branch ~= "" then
+        table.insert(githead, { branch[1], theme.prefix_color })
+        table.insert(githead, { branch[2], theme.branch_color })
+      end
+
+      local stashes = config.show_stashes and get_stashes(status) or ""
+      if stashes ~= nil and stashes ~= "" then
+        table.insert(githead, {stashes, theme.stashes_color })
+      end
+
+      local state = config.show_state and get_state(status) or ""
+      if state ~= nil and state ~= "" then
+        table.insert(githead, {state, theme.state_color })
+      end
+
+      local staged = config.show_staged and get_staged(status) or ""
+      if staged ~= nil and staged ~= "" then
+        table.insert(githead, {staged, theme.staged_color })
+      end
+
+      local unstaged = config.show_unstaged and get_unstaged(status) or ""
+      if unstaged ~= nil and unstaged ~= "" then
+        table.insert(githead, {unstaged, theme.unstaged_color })
+      end
+
+      local untracked = config.show_untracked and get_untracked(status) or ""
+      if untracked ~= nil and untracked ~= "" then
+        table.insert(githead, {untracked, theme.untracked_color })
+      end
+
+      if #githead == 0 then
+        return ""
+      else
+        table.insert(githead, {" ", theme.prefix_color})
+        return githead
+      end
+    end
+  end
 end
 
 return { setup = setup }

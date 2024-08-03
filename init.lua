@@ -40,7 +40,7 @@ local function setup(_, options)
     unstaged_symbol = options.unstaged_symbol or "!",
 
     show_untracked = options.show_untracked == nil and true or options.show_untracked,
-    untracked_color = options.untracked_color or "blue",
+    untracked_color = options.untracked_color or "bright blue",
     untracked_symbol = options.untracked_symbol or "?",
   }
 

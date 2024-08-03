@@ -22,6 +22,12 @@ local function setup(_, options)
     commit_color = options.commit_color or "bright magenta",
     commit_symbol = options.commit_symbol or "@",
 
+    show_behind_ahead = options.behind_ahead == nil and true or options.behind_ahead,
+    behind_color = options.behind_color or "bright magenta",
+    behind_symbol = options.behind_symbol or "⇣",
+    ahead_color = options.ahead_color or "bright magenta",
+    ahead_symbol = options.ahead_symbol or "⇡",
+
     show_stashes = options.show_stashes == nil and true or options.show_stashes,
     stashes_color = options.stashes_color or "bright magenta",
     stashes_symbol = options.stashes_symbol or "$",
@@ -79,6 +85,28 @@ local function setup(_, options)
         ui.Span(branch_prefix),
         ui.Span(branch_string):fg(config.branch_color)
       }
+    end
+  end
+
+  function Header:get_behind_ahead(status)
+    local diverged_ahead, diverged_behind = status:match("have (%d+) and (%d+) different")
+
+    if diverged_ahead and diverged_behind then
+      return ui.Line {
+        ui.Span(" " .. config.behind_symbol .. diverged_behind):fg(config.behind_color),
+        ui.Span(config.ahead_symbol .. diverged_ahead):fg(config.ahead_color)
+      }
+    else
+      local behind = status:match("behind %S+ by (%d+) commit")
+      local ahead = status:match("ahead of %S+ by (%d+) commit")
+
+      if ahead then
+        return ui.Span(" " .. config.ahead_symbol .. ahead):fg(config.ahead_color)
+      elseif behind then
+        return ui.Span(" " .. config.behind_symbol .. behind):fg(config.behind_color)
+      else
+        return ""
+      end
     end
   end
 
@@ -183,6 +211,7 @@ local function setup(_, options)
     local status = get_status()
 
     local branch = config.show_branch and self:get_branch(status) or ""
+    local behind_ahead = config.show_behind_ahead and self:get_behind_ahead(status) or ""
     local stashes = config.show_stashes and self:get_stashes(status) or ""
     local state = config.show_state and self:get_state(status) or ""
     local staged = config.show_staged and self:get_staged(status) or ""
@@ -191,6 +220,7 @@ local function setup(_, options)
 
     return ui.Line {
       branch,
+      behind_ahead,
       stashes,
       state,
       staged,

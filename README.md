@@ -42,6 +42,12 @@ require("githead"):setup({
   commit_color = "bright magenta",
   commit_symbol = "@",
 
+  show_behind_ahead = true,
+  behind_color = "bright magenta",
+  behind_symbol = "⇣",
+  ahead_color = "bright magenta",
+  ahead_symbol = "⇡",
+
   show_stashes = true,
   stashes_color = "bright magenta",
   stashes_symbol = "$",
@@ -68,6 +74,7 @@ require("githead"):setup({
 ## Features
 
 - [x] Current branch (or current commit if branch is not presented)
+- [x] Behind/Ahead of the remote
 - [x] Stashes
 - [x] States
   - [x] merge

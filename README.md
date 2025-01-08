@@ -8,7 +8,7 @@ All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= 0.3.0
+- yazi version >= 0.4.0
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation
@@ -98,3 +98,4 @@ This command provides information about branches, stashes, staged files, unstage
 
 - [yazi source code](https://github.com/sxyazi/yazi)
 - [powerlevel10k](https://github.com/romkatv/powerlevel10k)
+- [twio142](https://github.com/twio142/githead.yazi)

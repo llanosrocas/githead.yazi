@@ -8,7 +8,7 @@ All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= 0.4.0
+- yazi version >= 25.2.11
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation

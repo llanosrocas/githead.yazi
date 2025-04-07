@@ -233,16 +233,18 @@ return {
 		local callback = function()
 			local cwd = cx.active.current.cwd
 
-			if this.cwd ~= cwd then
-				this.cwd = cwd
-				ya.manager_emit("plugin", {
-					this._id,
-					ya.quote(tostring(cwd), true),
-				})
-			end
+			ya.mgr_emit("plugin", {
+				this._id,
+				ya.quote(tostring(cwd), true),
+			})
 		end
 
 		ps.sub("cd", callback)
+		ps.sub("rename", callback)
+		ps.sub("bulk", callback)
+		ps.sub("move", callback)
+		ps.sub("trash", callback)
+		ps.sub("delete", callback)
 		ps.sub("tab", callback)
 	end,
 

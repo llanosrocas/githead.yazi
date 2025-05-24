@@ -209,6 +209,10 @@ return {
 		function Header:githead()
 			local status = this.output
 
+      if not status then
+        return ui.Line({})
+      end
+
 			local branch = config.show_branch and self:get_branch(status) or ""
 			local behind_ahead = config.show_behind_ahead and self:get_behind_ahead(status) or ""
 			local stashes = config.show_stashes and self:get_stashes(status) or ""

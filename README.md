@@ -8,16 +8,16 @@ All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= 25.2.11
+- yazi version >= [622ba09](https://github.com/sxyazi/yazi/commit/622ba09a803b4a38983339b027d420238affa3d6).
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation
 
 ```sh
-ya pack -a llanosrocas/githead
+ya pkg add llanosrocas/githead
 ```
 
-Or manually copy `init.lua` to the `~/.config/yazi/plugins/githead.yazi/init.lua`
+Or manually copy `main.lua` to the `~/.config/yazi/plugins/githead.yazi/main.lua`
 
 ## Usage
 

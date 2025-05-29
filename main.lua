@@ -236,8 +236,7 @@ return {
 
 		local callback = function()
 			local cwd = cx.active.current.cwd
-
-			ya.mgr_emit("plugin", {
+			ya.emit("plugin", {
 				this._id,
 				ya.quote(tostring(cwd), true),
 			})

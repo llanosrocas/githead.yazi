@@ -3,12 +3,13 @@
 Git status header for yazi inspired by [powerlevel10k](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
 
 ![preview](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview.png)
+![preview](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-2.png)
 
 All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= [622ba09](https://github.com/sxyazi/yazi/commit/622ba09a803b4a38983339b027d420238affa3d6).
+- yazi version >= 25.5.28.
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation
@@ -27,7 +28,7 @@ Add this to your `~/.config/yazi/init.lua`:
 require("githead"):setup()
 ```
 
-Read more about indicators [here](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
+Read more about symbols [here](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
 
 Optionally, configure header:
 
@@ -69,6 +70,23 @@ require("githead"):setup({
   untracked_color = "blue",
   untracked_symbol = "?",
 })
+```
+
+```
+/current/dir on ( main) ⇣2⇡3 $1 rebase 1/2 ~2 +4 !1 ?5
+|            |   |     | | |  |  |          |  |  |  |
+|            |   |     | | |  |  |          |  |  |  └─── untracked_symbol
+|            |   |     | | |  |  |          |  |  └────── unstaged_symbol
+|            |   |     | | |  |  |          |  └───────── staged_symbol
+|            |   |     | | |  |  |          └──────────── state_symbol
+|            |   |     | | |  |  └─────────────────────── state_prefix
+|            |   |     | | |  └────────────────────────── stashes_symbol
+|            |   |     | | └───────────────────────────── ahead_symbol
+|            |   |     | └─────────────────────────────── behind_symbol
+|            |   |     └───────────────────────────────── branch_borders
+|            |   └─────────────────────────────────────── branch_symbol
+|            └─────────────────────────────────────────── branch_prefix
+└──────────────────────────────────────────────────────── cwd
 ```
 
 ## Features

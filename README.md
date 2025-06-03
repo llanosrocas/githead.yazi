@@ -9,7 +9,7 @@ All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= 25.5.28.
+- yazi version >= [25.5.31](https://github.com/sxyazi/yazi/releases/tag/v25.5.31).
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation
@@ -98,6 +98,8 @@ require("githead"):setup({
   - [x] merge
   - [x] cherry
   - [x] rebase (+ done counter)
+  - [x] revert
+  - [x] bisect (only if other states are not present)
 - [x] Staged
 - [x] Unstaged
 - [x] Untracked
@@ -107,7 +109,7 @@ require("githead"):setup({
 The goal is to use minimum amount of shell commands.
 
 ```shell
-git status --ignore-submodules=dirty --branch --show-stash
+git status --ignore-submodules=dirty --branch --show-stash --ahead-behind
 ```
 
 This command provides information about branches, stashes, staged files, unstaged files, untracked files, and other statistics.

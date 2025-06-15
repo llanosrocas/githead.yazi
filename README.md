@@ -9,7 +9,7 @@ All supported features are listed [here](#features)
 
 ## Requirements
 
-- yazi version >= [25.5.31](https://github.com/sxyazi/yazi/releases/tag/v25.5.31).
+- yazi version >= [693dff2](https://github.com/sxyazi/yazi/tree/693dff25e3165e357cc9d0b94ca3f2b176741a36).
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Installation
@@ -34,11 +34,26 @@ Optionally, configure header:
 
 ```lua
 require("githead"):setup({
+  order = {
+    "branch",
+    "remote",
+    "behind_ahead",
+    "stashes",
+    "state",
+    "staged",
+    "unstaged",
+    "untracked",
+  }
+
   show_branch = true,
   branch_prefix = "on",
   branch_color = "blue",
   branch_symbol = "",
   branch_borders = "()",
+
+  show_remote = true, -- only shown if different from local branch
+  remote_prefix = ":",
+  remote_color = "bright magenta",
 
   commit_color = "bright magenta",
   commit_symbol = "@",
@@ -73,25 +88,27 @@ require("githead"):setup({
 ```
 
 ```
-/current/dir on ( main) ⇣2⇡3 $1 rebase 1/2 ~2 +4 !1 ?5
-|            |   |     | | |  |  |          |  |  |  |
-|            |   |     | | |  |  |          |  |  |  └─── untracked_symbol
-|            |   |     | | |  |  |          |  |  └────── unstaged_symbol
-|            |   |     | | |  |  |          |  └───────── staged_symbol
-|            |   |     | | |  |  |          └──────────── state_symbol
-|            |   |     | | |  |  └─────────────────────── state_prefix
-|            |   |     | | |  └────────────────────────── stashes_symbol
-|            |   |     | | └───────────────────────────── ahead_symbol
-|            |   |     | └─────────────────────────────── behind_symbol
-|            |   |     └───────────────────────────────── branch_borders
-|            |   └─────────────────────────────────────── branch_symbol
-|            └─────────────────────────────────────────── branch_prefix
+/cwd on ( feature):main ⇣2⇡3 $1 rebase 1/2 ~2 +4 !1 ?5
+|    |   |        ││     | |  |  |          |  |  |  |
+|    |   |        ││     | |  |  |          |  |  |  └─── untracked_symbol
+|    |   |        ││     | |  |  |          |  |  └────── unstaged_symbol
+|    |   |        ││     | |  |  |          |  └───────── staged_symbol
+|    |   |        ││     | |  |  |          └──────────── state_symbol
+|    |   |        ││     | |  |  └─────────────────────── state_prefix
+|    |   |        ││     | |  └────────────────────────── stashes_symbol
+|    |   |        ││     | └───────────────────────────── ahead_symbol
+|    |   |        ││     └─────────────────────────────── behind_symbol
+|    |   |        |└───────────────────────────────────── remote_prefix
+|    |   |        └────────────────────────────────────── branch_borders
+|    |   └─────────────────────────────────────────────── branch_symbol
+|    └─────────────────────────────────────────────────── branch_prefix
 └──────────────────────────────────────────────────────── cwd
 ```
 
 ## Features
 
 - [x] Current branch (or current commit if branch is not presented)
+- [x] Remote branch (only if it's different from local branch)
 - [x] Behind/Ahead of the remote
 - [x] Stashes
 - [x] States

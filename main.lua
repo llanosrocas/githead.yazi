@@ -18,6 +18,10 @@ return {
       branch_symbol = options.branch_symbol or "",
       branch_borders = options.branch_borders or "()",
 
+      show_remote = options.show_remote == nil and true or options.show_remote,
+      remote_prefix = options.remote_prefix or ":",
+      remote_color = options.remote_color or "bright magenta",
+
       commit_color = options.commit_color or "bright magenta",
       commit_symbol = options.commit_symbol or "@",
 
@@ -83,6 +87,18 @@ return {
         return ui.Line({
           ui.Span(branch_prefix),
           ui.Span(branch_string):fg(config.branch_color),
+        })
+      end
+    end
+
+    function Header:get_remote(status)
+      local branch = status:match("On branch (%S+)")
+      local remote_branch = status:match("'[^/]+/([^']+)'")
+
+      if (branch and remote_branch) and (branch ~= remote_branch) then
+        return ui.Line({
+          ui.Span(config.remote_prefix),
+          ui.Span(remote_branch):fg(config.remote_color),
         })
       end
     end
@@ -218,6 +234,7 @@ return {
       end
 
       local branch = config.show_branch and self:get_branch(status) or ""
+      local remote = config.show_remote and self:get_remote(status) or ""
       local behind_ahead = config.show_behind_ahead and self:get_behind_ahead(status) or ""
       local stashes = config.show_stashes and self:get_stashes(status) or ""
       local state = config.show_state and self:get_state(status) or ""
@@ -227,6 +244,7 @@ return {
 
       return ui.Line({
         branch,
+        remote,
         behind_ahead,
         stashes,
         state,

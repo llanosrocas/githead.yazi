@@ -2,10 +2,10 @@
 
 Git status header for yazi inspired by [powerlevel10k](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
 
-![preview](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview.png)
-![preview](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-2.png)
+![preview-default](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-default.png)
+![preview-fullscreen](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-fullscreen.png)
 
-All supported features are listed [here](#features)
+All supported features are listed [here](#features). More presets are available [here](#presets).
 
 ## Requirements
 
@@ -14,55 +14,77 @@ All supported features are listed [here](#features)
 
 ## Installation
 
+1. Using yazi package manager
+
 ```sh
 ya pkg add llanosrocas/githead
 ```
 
-Or manually copy `main.lua` to the `~/.config/yazi/plugins/githead.yazi/main.lua`
+_Or manually copy `main.lua` to the `~/.config/yazi/plugins/githead.yazi/main.lua`_
 
-## Usage
-
-Add this to your `~/.config/yazi/init.lua`:
+2. Add this line to your `~/.config/yazi/init.lua`:
 
 ```lua
 require("githead"):setup()
 ```
 
-Read more about symbols [here](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
+## Configuration
 
-Optionally, configure header:
+This is default config, if you want to see copy-paste presets go to [this section](#presets).
 
 ```lua
 require("githead"):setup({
   order = {
+    "__spacer__",
     "branch",
     "remote",
-    "behind_ahead",
+    "__spacer__",
+    "tag",
+    "__spacer__",
+    "commit",
+    "__spacer__",
+    "behind_ahead_remote",
+    "__spacer__",
     "stashes",
+    "__spacer__",
     "state",
+    "__spacer__",
     "staged",
+    "__spacer__",
     "unstaged",
+    "__spacer__",
     "untracked",
-  }
+  },
+
+  show_numbers = true, -- shows staged, unstaged, untracked, stashes count
 
   show_branch = true,
-  branch_prefix = "on",
+  branch_prefix = "",
   branch_color = "blue",
-  branch_symbol = "",
-  branch_borders = "()",
+  branch_symbol = "",
+  branch_borders = "",
 
-  show_remote = true, -- only shown if different from local branch
-  remote_prefix = ":",
-  remote_color = "bright magenta",
+  show_remote_branch = true, -- only shown if different from local branch
+  always_show_remote_branch = false, -- always show remote branch even if it the same as local branch
+  always_show_remote_repo = false, -- Adds `origin/` if `always_show_remote_branch` is enabled
+  remote_branch_prefix = ":",
+  remote_branch_color = "bright magenta",
 
+  show_tag = true, -- only shown if branch is not available
+  always_show_tag = false,
+  tag_color = "magenta",
+  tag_symbol = "#",
+
+  show_commit = true, -- only shown if branch AND tag are not available
+  always_show_commit = false,
   commit_color = "bright magenta",
   commit_symbol = "@",
 
-  show_behind_ahead = true,
-  behind_color = "bright magenta",
-  behind_symbol = "⇣",
-  ahead_color = "bright magenta",
-  ahead_symbol = "⇡",
+  show_behind_ahead_remote = true,
+  behind_remote_color = "bright magenta",
+  behind_remote_symbol = "⇣",
+  ahead_remote_color = "bright magenta",
+  ahead_remote_symbol = "⇡",
 
   show_stashes = true,
   stashes_color = "bright magenta",
@@ -88,27 +110,187 @@ require("githead"):setup({
 ```
 
 ```
-/cwd on ( feature):main ⇣2⇡3 $1 rebase 1/2 ~2 +4 !1 ?5
-|    |   |        ││     | |  |  |          |  |  |  |
-|    |   |        ││     | |  |  |          |  |  |  └─── untracked_symbol
-|    |   |        ││     | |  |  |          |  |  └────── unstaged_symbol
-|    |   |        ││     | |  |  |          |  └───────── staged_symbol
-|    |   |        ││     | |  |  |          └──────────── state_symbol
-|    |   |        ││     | |  |  └─────────────────────── state_prefix
-|    |   |        ││     | |  └────────────────────────── stashes_symbol
-|    |   |        ││     | └───────────────────────────── ahead_symbol
-|    |   |        ││     └─────────────────────────────── behind_symbol
-|    |   |        |└───────────────────────────────────── remote_prefix
-|    |   |        └────────────────────────────────────── branch_borders
-|    |   └─────────────────────────────────────────────── branch_symbol
-|    └─────────────────────────────────────────────────── branch_prefix
-└──────────────────────────────────────────────────────── cwd
+/cwd on ( feature):origin/main #v1.0.0 #1234567 ⇣2⇡3 $1 rebase 1/2 ~2 +4 !1 ?5
+|    |   |  |     ││ |     |    |       |        | |  |  |          |  |  |  |
+|    |   |  |     ││ |     |    |       |        | |  |  |          |  |  |  └─── untracked_symbol
+|    |   |  |     ││ |     |    |       |        | |  |  |          |  |  └────── unstaged_symbol
+|    |   |  |     ││ |     |    |       |        | |  |  |          |  └───────── staged_symbol
+|    |   |  |     ││ |     |    |       |        | |  |  |          └──────────── state_symbol
+|    |   |  |     ││ |     |    |       |        | |  |  └─────────────────────── state_prefix
+|    |   |  |     ││ |     |    |       |        | |  └────────────────────────── stashes_symbol
+|    |   |  |     ││ |     |    |       |        | └───────────────────────────── ahead_symbol
+|    |   |  |     ││ |     |    |       |        └─────────────────────────────── behind_symbol
+|    |   |  |     ││ |     |    |       └──────────────────────────────────────── commit_symbol
+|    |   |  |     ││ |     |    └──────────────────────────────────────────────── tag_symbol
+|    |   |  |     ││ |     └───────────────────────────────────────────────────── remote_branch
+|    |   |  |     ││ └─────────────────────────────────────────────────────────── remote_repo
+|    |   |  |     |└───────────────────────────────────────────────────────────── remote_branch_prefix
+|    |   |  |     └────────────────────────────────────────────────────────────── branch_borders
+|    |   |  └──────────────────────────────────────────────────────────────────── branch
+|    |   └─────────────────────────────────────────────────────────────────────── branch_symbol
+|    └─────────────────────────────────────────────────────────────────────────── branch_prefix
+└──────────────────────────────────────────────────────────────────────────────── cwd
 ```
+
+## Presets
+
+- My config
+
+  ![preview-fav](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-fav.png)
+
+  <details>
+  <summary>Config</summary>
+
+  ```lua
+  require("githead"):setup({
+    branch_prefix = "on",
+    branch_symbol = " ",
+    branch_borders = "()",
+  })
+  ```
+
+  </details>
+
+- [spaceship-prompt](https://github.com/spaceship-prompt/spaceship-prompt)
+
+  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-spaceship.png)
+
+  <details>
+  <summary>Config</summary>
+
+  ```lua
+  require("githead"):setup({
+    order = {
+      "__spacer__",
+      "branch",
+      "remote",
+      "__spacer__",
+      "tag",
+      "__spacer__",
+      "commit",
+      "__spacer__",
+      "behind_ahead_remote",
+      "stashes",
+      "state",
+      "staged",
+      "unstaged",
+      "untracked",
+    },
+
+    show_numbers = false,
+
+    branch_symbol = " ",
+    branch_prefix = "on",
+  })
+  ```
+
+  </details>
+
+- [robertgzr/porcelain](https://github.com/robertgzr/porcelain)
+
+  ![preview-porcelain](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-porcelain.png)
+
+  <details>
+  <summary>Config</summary>
+
+  ```lua
+  require("githead"):setup({
+    order = {
+      "__spacer__",
+      "branch",
+      "commit",
+      "__spacer__",
+      "behind_ahead_remote",
+      "__spacer__",
+      "untracked",
+      "state",
+      "unstaged",
+      "__spacer__",
+      "staged",
+    },
+
+    show_numbers = false,
+
+    show_branch = true,
+    branch_prefix = "",
+    branch_color = "#288BD2",
+
+    always_show_commit = true,
+    commit_color = "#859A00",
+
+    show_behind_ahead_remote = true,
+    behind_remote_symbol = "↓",
+    ahead_remote_symbol = "↑",
+    behind_remote_color = "#DC322E",
+    ahead_remote_color = "#4DB6AC",
+
+    show_state = true,
+    show_state_prefix = false,
+    state_symbol = "!!",
+    state_color = "#B58901",
+
+    staged_symbol = "✔",
+    staged_color = "green",
+
+    unstaged_symbol = "Δ",
+    unstaged_color = "#288BD2",
+
+    untracked_symbol = "?",
+    untracked_color = "#415F65",
+  })
+  ```
+
+  </details>
+
+- Minimal (No color)
+
+  ![preview-minimal-no-color](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-minimal-no-color.png)
+
+  <details>
+  <summary>Config</summary>
+
+  ```lua
+  require("githead"):setup({
+    branch_color = "",
+
+    remote_branch_prefix = "@",
+    remote_branch_color = "",
+
+    tag_color = "",
+
+    commit_color = "",
+
+    ahead_remote_symbol = "+",
+    ahead_remote_color = "",
+    behind_remote_symbol = "-",
+    behind_remote_color = "",
+
+    stashes_symbol = "*",
+    stashes_color = "",
+
+    show_state_prefix = false,
+    state_symbol = "~",
+    state_color = "",
+
+    staged_symbol = "S",
+    staged_color = "",
+
+    unstaged_symbol = "U",
+    unstaged_color = "",
+
+    untracked_symbol = "N",
+    untracked_color = "",
+  })
+  ```
+
+  </details>
 
 ## Features
 
-- [x] Current branch (or current commit if branch is not presented)
-- [x] Remote branch (only if it's different from local branch)
+- [x] Current branch
+- [x] Remote and remote branch
+- [x] Latest tag
+- [x] Latest commit
 - [x] Behind/Ahead of the remote
 - [x] Stashes
 - [x] States
@@ -116,7 +298,7 @@ require("githead"):setup({
   - [x] cherry
   - [x] rebase (+ done counter)
   - [x] revert
-  - [x] bisect (only if other states are not present)
+  - [x] bisect
 - [x] Staged
 - [x] Unstaged
 - [x] Untracked
@@ -125,11 +307,23 @@ require("githead"):setup({
 
 The goal is to use minimum amount of shell commands.
 
+- Branch, stashes, staged files, unstaged files, untracked files.
+
 ```shell
 git status --ignore-submodules=dirty --branch --show-stash --ahead-behind
 ```
 
-This command provides information about branches, stashes, staged files, unstaged files, untracked files, and other statistics.
+- Remote branch and repo:
+
+```shell
+git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+```
+
+- Latest tag and commit:
+
+```shell
+git log --format="commit %h%d" -n 1
+```
 
 ## Credits
 

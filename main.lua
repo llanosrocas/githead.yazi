@@ -33,6 +33,7 @@ return {
         "__spacer__",
         "untracked",
       },
+
       show_numbers = options.show_numbers == nil and true or options.show_numbers,
 
       show_branch = options.show_branch == nil and true or options.show_branch,
@@ -42,25 +43,25 @@ return {
       branch_borders = options.branch_borders or "",
 
       show_remote = options.show_remote == nil and true or options.show_remote,
-      always_show_remote = options.always_show_remote == nil and true or options.always_show_remote,
+      always_show_remote = options.always_show_remote == nil and false or options.always_show_remote,
       remote_prefix = options.remote_prefix or ":",
       remote_color = options.remote_color or "bright magenta",
 
       show_tag = options.show_tag == nil and true or options.show_tag,
-      always_show_tag = options.always_show_tag == nil and true or options.always_show_tag,
+      always_show_tag = options.always_show_tag == nil and false or options.always_show_tag,
       tag_color = options.tag_color or "bright magenta",
       tag_symbol = options.tag_symbol == nil and "#" or options.tag_symbol,
 
       show_commit = options.show_commit == nil and true or options.show_commit,
-      always_show_commit = options.always_show_commit == nil and true or options.always_show_commit,
+      always_show_commit = options.always_show_commit == nil and false or options.always_show_commit,
       commit_color = options.commit_color or "bright magenta",
       commit_symbol = options.commit_symbol == nil and "@" or options.commit_symbol,
 
       show_behind_ahead_remote = options.show_behind_ahead_remote == nil and true or options.show_behind_ahead_remote,
-      behind_color = options.behind_color or "bright magenta",
-      behind_symbol = options.behind_symbol or "⇣",
-      ahead_color = options.ahead_color or "bright magenta",
-      ahead_symbol = options.ahead_symbol or "⇡",
+      behind_remote_color = options.behind_remote_color or "bright magenta",
+      behind_remote_symbol = options.behind_remote_symbol or "⇣",
+      ahead_remote_color = options.ahead_remote_color or "bright magenta",
+      ahead_remote_symbol = options.ahead_remote_symbol or "⇡",
 
       show_stashes = options.show_stashes == nil and true or options.show_stashes,
       stashes_color = options.stashes_color or "bright magenta",
@@ -83,7 +84,6 @@ return {
       untracked_color = options.untracked_color or "bright blue",
       untracked_symbol = options.untracked_symbol or "?",
     }
-
 
     function Header:render_branch(data)
       local branch = data.branch
@@ -159,11 +159,11 @@ return {
       local ahead = data.ahead_remote
 
       local behind_label = behind and behind > 0
-          and ui.Span(config.behind_symbol .. (config.show_numbers and behind or "")):fg(config
-            .behind_color)
+          and ui.Span(config.behind_remote_symbol .. (config.show_numbers and behind or "")):fg(config
+            .behind_remote_color)
 
       local ahead_label = ahead and ahead > 0
-          and ui.Span(config.ahead_symbol .. (config.show_numbers and ahead or "")):fg(config.ahead_color)
+          and ui.Span(config.ahead_remote_symbol .. (config.show_numbers and ahead or "")):fg(config.ahead_remote_color)
 
       if ahead_label and behind_label then
         return ui.Line({
@@ -180,8 +180,7 @@ return {
     end
 
     function Header:render_stashes(data)
-      local status = data.status
-      local stashes_count = tonumber(status:match("Your stash currently has (%d+)")) or 0
+      local stashes_count = data.stashes
 
       if stashes_count == 0 then return nil end
 
@@ -193,51 +192,31 @@ return {
     end
 
     function Header:render_state(data)
-      local status = data.status
-      local unmerged = status:match("Unmerged paths:%s*(.-)%s*\n\n")
+      if data.unmerged then
+        local state_label = ""
 
-      if unmerged then
-        local filtered_unmerged = unmerged:gsub("^[%s]*%b()[%s]*", ""):gsub("^[%s]*%b()[%s]*", "")
+        if config.show_state_prefix and data.state_prefix then
+          state_label = data.state_prefix
 
-        local unmerged_count = 0
-        for line in filtered_unmerged:gmatch("[^\r\n]+") do
-          if line:match("%S") then
-            unmerged_count = unmerged_count + 1
+          if data.state_prefix == "rebase" and config.show_numbers and data.rebase_done then
+            state_label = state_label .. " " .. data.rebase_done .. "/" .. data.unmerged_count
           end
+
+          state_label = state_label .. " "
         end
 
-        local state_name = ""
+        local unmerged_label = config.show_numbers and data.unmerged_count or ""
 
-        if config.show_state_prefix then
-          if status:find("git merge") then
-            state_name = "merge "
-          elseif status:find("git cherry%-pick") then
-            state_name = "cherry "
-          elseif status:find("git rebase") then
-            state_name = "rebase "
-
-            if status:find("done") then
-              local done = status:match("%((%d+) com.- done%)") or ""
-              state_name = state_name .. done .. "/" .. unmerged_count .. " "
-            end
-          elseif status:find("git revert") then
-            state_name = "revert "
-          end
-        end
-
-        return ui.Span(state_name .. config.state_symbol .. unmerged_count):fg(config.state_color)
-      else
-        if status:find("git bisect") then
-          return ui.Span("bisect"):fg(config.state_color)
-        end
-
-        return nil
+        return ui.Span(state_label .. config.state_symbol .. unmerged_label):fg(config.state_color)
+      elseif data.state_prefix == "bisect" then
+        return ui.Span("bisect"):fg(config.state_color)
       end
+
+      return nil
     end
 
     function Header:render_staged(data)
-      local status = data.status
-      local staged = status:match("Changes to be committed:%s*(.-)%s*\n\n")
+      local staged = data.staged
 
       if staged then
         local staged_label = config.staged_symbol
@@ -262,8 +241,7 @@ return {
     end
 
     function Header:render_unstaged(data)
-      local status = data.status
-      local unstaged = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
+      local unstaged = data.unstaged
 
       if unstaged then
         local unstaged_label = config.unstaged_symbol
@@ -290,8 +268,7 @@ return {
     end
 
     function Header:render_untracked(data)
-      local status = data.status
-      local untracked = status:match("Untracked files:%s*(.-)%s*\n\n")
+      local untracked = data.untracked
 
       if untracked then
         local untracked_label = config.untracked_symbol
@@ -329,7 +306,7 @@ return {
           if head[#head] ~= " " then
             table.insert(head, " ")
           end
-        elseif self["render_" .. key] then
+        else
           local fn = self["render_" .. key]
           local is_shown = config["show_" .. key]
 
@@ -339,8 +316,6 @@ return {
               table.insert(head, value)
             end
           end
-        else
-          table.insert(head, key)
         end
       end
 
@@ -366,7 +341,6 @@ return {
     ps.sub("tab", callback)
   end,
 
-
   entry = function(_, job)
     local args = job.args or job
 
@@ -375,22 +349,87 @@ return {
       return str:gsub("[\r\n]", "")
     end
 
-    local results = {}
+    local data = {}
 
     --- @param status string
     local get_behind_ahead_remote = function(status)
       local diverged_ahead, diverged_behind = status:match("have (%d+) and (%d+) different")
       if diverged_ahead and diverged_behind then
-        results.behind_remote = tonumber(diverged_behind)
-        results.ahead_remote = tonumber(diverged_ahead)
+        data.behind_remote = tonumber(diverged_behind)
+        data.ahead_remote = tonumber(diverged_ahead)
       else
         local behind_remote = status:match("behind %S+ by (%d+) commits?")
         local ahead_remote = status:match("ahead of %S+ by (%d+) commits?")
 
-
-        results.behind_remote = tonumber(behind_remote)
-        results.ahead_remote = tonumber(ahead_remote)
+        data.behind_remote = tonumber(behind_remote)
+        data.ahead_remote = tonumber(ahead_remote)
       end
+    end
+
+    --- @param status string
+    local get_branch = function(status)
+      local branch = status:match("On branch (%S+)")
+      data.branch = branch
+    end
+
+    --- @param status string
+    local get_stashes = function(status)
+      local stashes = tonumber(status:match("Your stash currently has (%d+)")) or 0
+      data.stashes = stashes
+    end
+
+    --- @param status string
+    local get_state = function(status)
+      local unmerged = status:match("Unmerged paths:%s*(.-)%s*\n\n")
+      data.unmerged = unmerged
+
+      data.state_prefix = nil
+      data.unmerged_count = 0
+      data.rebase_done = nil
+
+      if unmerged then
+        local filtered_unmerged = unmerged:gsub("^[%s]*%b()[%s]*", ""):gsub("^[%s]*%b()[%s]*", "")
+
+        local count = 0
+        for line in filtered_unmerged:gmatch("[^\r\n]+") do
+          if line:match("%S") then
+            count = count + 1
+          end
+        end
+
+        data.unmerged_count = count
+      end
+
+      if status:find("git merge") then
+        data.state_prefix = "merge"
+      elseif status:find("git cherry%-pick") then
+        data.state_prefix = "cherry"
+      elseif status:find("git rebase") then
+        data.state_prefix = "rebase"
+        data.rebase_done = status:match("%((%d+) com.- done%)")
+      elseif status:find("git revert") then
+        data.state_prefix = "revert"
+      elseif not unmerged and status:find("git bisect") then
+        data.state_prefix = "bisect"
+      end
+    end
+
+    --- @param status string
+    local get_staged = function(status)
+      local staged = status:match("Changes to be committed:%s*(.-)%s*\n\n")
+      data.staged = staged
+    end
+
+    --- @param status string
+    local get_unstaged = function(status)
+      local unstaged = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
+      data.unstaged = unstaged
+    end
+
+    --- @param status string
+    local get_untracked = function(status)
+      local untracked = status:match("Untracked files:%s*(.-)%s*\n\n")
+      data.untracked = untracked
     end
 
     local get_status = function()
@@ -402,12 +441,13 @@ return {
       local cmd_output = cmd:output()
 
       if cmd_output then
-        results.status = cmd_output.stdout
-
-        local branch = cmd_output.stdout:match("On branch (%S+)")
-        results.branch = branch
-
+        get_branch(cmd_output.stdout)
         get_behind_ahead_remote(cmd_output.stdout)
+        get_stashes(cmd_output.stdout)
+        get_state(cmd_output.stdout)
+        get_staged(cmd_output.stdout)
+        get_unstaged(cmd_output.stdout)
+        get_untracked(cmd_output.stdout)
       end
     end
 
@@ -421,7 +461,7 @@ return {
 
       if remote_output then
         local remote_regex = "[^/]+/([^']+)";
-        results.remote = truncate(remote_output.stdout):match(remote_regex)
+        data.remote = truncate(remote_output.stdout):match(remote_regex)
       end
     end
 
@@ -436,7 +476,7 @@ return {
       if cmd_output then
         local tag = truncate(cmd_output.stdout)
         if #tag > 0 then
-          results.tag = tag
+          data.tag = tag
         end
       end
     end
@@ -452,7 +492,7 @@ return {
       if cmd_output then
         local commit = truncate(cmd_output.stdout)
         if #commit > 0 then
-          results.commit = commit
+          data.commit = commit
         end
       end
     end
@@ -462,6 +502,6 @@ return {
     get_commit()
     get_tag()
 
-    save(args[1], results)
+    save(args[1], data)
   end,
 }

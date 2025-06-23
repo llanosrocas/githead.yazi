@@ -2,8 +2,8 @@
 
 Git status header for yazi inspired by [powerlevel10k](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#what-do-different-symbols-in-git-status-mean).
 
-![preview-default](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-default.png)
-![preview-fullscreen](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-fullscreen.png)
+![preview-default](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-default.png)
+![preview-fullscreen](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-fullscreen.png)
 
 More presets are available [here](#presets). All supported features are listed [here](#features).
 
@@ -132,7 +132,7 @@ require("githead"):setup({
 
 - My config
 
-  ![preview-fav](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-fav.png)
+  ![preview-fav](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-fav.png)
 
   <details>
   <summary>Config</summary>
@@ -149,7 +149,7 @@ require("githead"):setup({
 
 - [spaceship-prompt](https://github.com/spaceship-prompt/spaceship-prompt)
 
-  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-spaceship.png)
+  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-spaceship.png)
 
   <details>
   <summary>Config</summary>
@@ -184,7 +184,7 @@ require("githead"):setup({
 
 - [robertgzr/porcelain](https://github.com/robertgzr/porcelain)
 
-  ![preview-porcelain](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-porcelain.png)
+  ![preview-porcelain](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-porcelain.png)
 
   <details>
   <summary>Config</summary>
@@ -240,7 +240,7 @@ require("githead"):setup({
 
 - Minimalist
 
-  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-minimalist.png)
+  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-minimalist.png)
 
   <details>
   <summary>Config</summary>

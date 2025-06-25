@@ -15,7 +15,7 @@ return {
       order = options.order or {
         "__spacer__",
         "branch",
-        "remote",
+        "remote_branch",
         "__spacer__",
         "tag",
         "__spacer__",
@@ -42,14 +42,16 @@ return {
       branch_symbol = options.branch_symbol or "",
       branch_borders = options.branch_borders or "",
 
-      show_remote = options.show_remote == nil and true or options.show_remote,
-      always_show_remote = options.always_show_remote == nil and false or options.always_show_remote,
+      show_remote_branch = options.show_remote == nil and true or options.show_remote,
+      always_show_remote_branch = options.always_show_remote_branch == nil and false or options
+          .always_show_remote_branch,
+      always_show_remote_repo = options.always_show_remote_repo == nil and false or options.always_show_remote_repo,
       remote_prefix = options.remote_prefix or ":",
       remote_color = options.remote_color or "bright magenta",
 
       show_tag = options.show_tag == nil and true or options.show_tag,
       always_show_tag = options.always_show_tag == nil and false or options.always_show_tag,
-      tag_color = options.tag_color or "bright magenta",
+      tag_color = options.tag_color or "magenta",
       tag_symbol = options.tag_symbol == nil and "#" or options.tag_symbol,
 
       show_commit = options.show_commit == nil and true or options.show_commit,
@@ -109,20 +111,23 @@ return {
       })
     end
 
-    function Header:render_remote(data)
+    function Header:render_remote_branch(data)
       local branch = data.branch
-      local remote = data.remote or branch
+      local remote_branch = data.remote_branch
+      local remote_repo = data.remote_repo
 
-      if branch and remote then
-        if config.always_show_remote or branch ~= remote then
-          return ui.Line({
-            ui.Span(config.remote_prefix),
-            ui.Span(remote):fg(config.remote_color),
-          })
-        end
-      end
+      if not remote_branch then return nil end
 
-      return nil
+      local show_remote = config.always_show_remote_branch or branch ~= remote_branch
+      if not show_remote then return nil end
+
+      local remote_branch_label =
+          config.always_show_remote_repo and (remote_repo .. "/" .. remote_branch) or remote_branch
+
+      return ui.Line({
+        ui.Span(config.remote_prefix),
+        ui.Span(remote_branch_label):fg(config.remote_color),
+      })
     end
 
     function Header:render_tag(data)
@@ -149,7 +154,7 @@ return {
       if (not branch and not tag) or config.always_show_commit then
         return ui.Line({
           ui.Span(config.commit_symbol),
-          ui.Span(commit):fg(config.commit_color),
+          ui.Span(commit:sub(1, 7)):fg(config.commit_color),
         })
       end
     end
@@ -368,14 +373,12 @@ return {
 
     --- @param status string
     local get_branch = function(status)
-      local branch = status:match("On branch (%S+)")
-      data.branch = branch
+      data.branch = status:match("On branch (%S+)")
     end
 
     --- @param status string
     local get_stashes = function(status)
-      local stashes = tonumber(status:match("Your stash currently has (%d+)")) or 0
-      data.stashes = stashes
+      data.stashes = tonumber(status:match("Your stash currently has (%d+)")) or 0
     end
 
     --- @param status string
@@ -416,20 +419,17 @@ return {
 
     --- @param status string
     local get_staged = function(status)
-      local staged = status:match("Changes to be committed:%s*(.-)%s*\n\n")
-      data.staged = staged
+      data.staged = status:match("Changes to be committed:%s*(.-)%s*\n\n")
     end
 
     --- @param status string
     local get_unstaged = function(status)
-      local unstaged = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
-      data.unstaged = unstaged
+      data.unstaged = status:match("Changes not staged for commit:%s*(.-)%s*\n\n")
     end
 
     --- @param status string
     local get_untracked = function(status)
-      local untracked = status:match("Untracked files:%s*(.-)%s*\n\n")
-      data.untracked = untracked
+      data.untracked = status:match("Untracked files:%s*(.-)%s*\n\n")
     end
 
     local get_status = function()
@@ -441,66 +441,64 @@ return {
       local cmd_output = cmd:output()
 
       if cmd_output then
-        get_branch(cmd_output.stdout)
-        get_behind_ahead_remote(cmd_output.stdout)
-        get_stashes(cmd_output.stdout)
-        get_state(cmd_output.stdout)
-        get_staged(cmd_output.stdout)
-        get_unstaged(cmd_output.stdout)
-        get_untracked(cmd_output.stdout)
+        local status = cmd_output.stdout
+
+        get_branch(status)
+        get_behind_ahead_remote(status)
+        get_stashes(status)
+        get_state(status)
+        get_staged(status)
+        get_unstaged(status)
+        get_untracked(status)
       end
     end
 
-    local get_remote = function()
-      local remote = Command("git")
+    local get_remote_branch = function()
+      local cmd = Command("git")
           :arg({ "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}" })
           :cwd(args[1])
           :env("LANGUAGE", "en_US.UTF-8")
           :stdout(Command.PIPED)
-      local remote_output = remote:output()
+      local cmd_output = cmd:output()
 
-      if remote_output then
-        local remote_regex = "[^/]+/([^']+)";
-        data.remote = truncate(remote_output.stdout):match(remote_regex)
+      if cmd_output then
+        local remote_branch_regex = "^[^/]+/(.+)";
+        local remote_repo_regex = "^([^/]+)/";
+
+        data.remote_branch = truncate(cmd_output.stdout):match(remote_branch_regex)
+        data.remote_repo = truncate(cmd_output.stdout):match(remote_repo_regex)
       end
     end
 
-    local get_tag = function()
+    --- @param log string
+    local get_tag = function(log)
+      data.tag = log:match("tag: ([^, )]+)")
+    end
+
+    --- @param log string
+    local get_commit = function(log)
+      data.commit = log:match("^commit%s+([a-f0-9]+)")
+    end
+
+    local get_git_log = function()
       local cmd = Command("git")
-          :arg({ "describe", "--tags", "--abbrev=0" })
+          :arg({ "log", "-1", "--decorate=short" })
           :cwd(args[1])
           :env("LANGUAGE", "en_US.UTF-8")
           :stdout(Command.PIPED)
       local cmd_output = cmd:output()
 
       if cmd_output then
-        local tag = truncate(cmd_output.stdout)
-        if #tag > 0 then
-          data.tag = tag
-        end
-      end
-    end
+        local log = cmd_output.stdout
 
-    local get_commit = function()
-      local cmd = Command("git")
-          :arg({ "rev-parse", "--short", "HEAD" })
-          :cwd(args[1])
-          :env("LANGUAGE", "en_US.UTF-8")
-          :stdout(Command.PIPED)
-      local cmd_output = cmd:output()
-
-      if cmd_output then
-        local commit = truncate(cmd_output.stdout)
-        if #commit > 0 then
-          data.commit = commit
-        end
+        get_tag(log)
+        get_commit(log)
       end
     end
 
     get_status()
-    get_remote()
-    get_commit()
-    get_tag()
+    get_remote_branch()
+    get_git_log()
 
     save(args[1], data)
   end,

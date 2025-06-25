@@ -64,17 +64,18 @@ require("githead"):setup({
   branch_symbol = "",
   branch_borders = "",
 
-  show_remote = true, -- by default only shown if different from local branch
-  always_show_remote = false, -- always show remote even if it the same as local branch
+  show_remote_branch = true, -- only shown if different from local branch
+  always_show_remote_branch = false, -- always show remote branch even if it the same as local branch
+  always_show_remote_repo = false, -- Adds `origin/` if `always_show_remote_branch` is enabled
   remote_prefix = ":",
   remote_color = "bright magenta",
 
-  show_tag = true, -- by default only shown if branch is not available
+  show_tag = true, -- only shown if branch is not available
   always_show_tag = false,
   tag_color = "bright magenta",
   tag_symbol = "#",
 
-  show_commit = true, -- only shown when branch AND tag are not available
+  show_commit = true, -- only shown if branch AND tag are not available
   always_show_commit = false,
   commit_color = "bright magenta",
   commit_symbol = "@",
@@ -192,17 +193,17 @@ require("githead"):setup({
   ```lua
   require("githead"):setup({
     order = {
-    	"__spacer__",
-    	"branch",
-    	"commit",
-    	"__spacer__",
-    	"behind_ahead_remote",
-    	"__spacer__",
-    	"untracked",
+      "__spacer__",
+      "branch",
+      "commit",
+      "__spacer__",
+      "behind_ahead_remote",
+      "__spacer__",
+      "untracked",
       "state",
-    	"unstaged",
-       "__spacer__",
-    	"staged",
+      "unstaged",
+      "__spacer__",
+      "staged",
     },
 
     show_numbers = false,
@@ -238,54 +239,42 @@ require("githead"):setup({
 
   </details>
 
-- Minimalist
+- Minimal (No color)
 
-  ![preview-spaceship](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-minimalist.png)
+  ![preview-minimal-no-color](https://github.com/llanosrocas/githead.yazi/blob/feature/v2/.github/images/preview-minimal-no-color.png)
 
   <details>
   <summary>Config</summary>
 
   ```lua
   require("githead"):setup({
-    show_branch = true,
     branch_color = "",
 
-    show_remote = true,
     remote_prefix = "@",
     remote_color = "",
 
-    show_tag = true,
-    tag_symbol = "#",
     tag_color = "",
 
-    show_commit = true,
-    commit_symbol = "",
     commit_color = "",
 
-    show_behind_ahead_remote = true,
-    ahead_remote_symbol = "<>",
+    ahead_remote_symbol = "+",
     ahead_remote_color = "",
-    behind_remote_symbol = "",
+    behind_remote_symbol = "-",
     behind_remote_color = "",
 
-    show_stashes = true,
     stashes_symbol = "=",
     stashes_color = "",
 
-    show_state = true,
     show_state_prefix = false,
     state_symbol = "~",
     state_color = "",
 
-    show_staged = true,
     staged_symbol = "S",
     staged_color = "",
 
-    show_unstaged = true,
     unstaged_symbol = "U",
     unstaged_color = "",
 
-    show_untracked = true,
     untracked_symbol = "N",
     untracked_color = "",
   })
@@ -295,8 +284,8 @@ require("githead"):setup({
 
 ## Features
 
-- [x] Current branch (or current commit if branch is not presented)
-- [x] Remote branch (only if it's different from local branch)
+- [x] Current branch
+- [x] Remote and remote branch
 - [x] Latest tag
 - [x] Latest commit
 - [x] Behind/Ahead of the remote
@@ -306,7 +295,7 @@ require("githead"):setup({
   - [x] cherry
   - [x] rebase (+ done counter)
   - [x] revert
-  - [x] bisect (only if other states are not present)
+  - [x] bisect
 - [x] Staged
 - [x] Unstaged
 - [x] Untracked
@@ -321,22 +310,16 @@ The goal is to use minimum amount of shell commands.
 git status --ignore-submodules=dirty --branch --show-stash --ahead-behind
 ```
 
-- Remote name:
+- Remote branch:
 
 ```shell
 git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
 ```
 
-- Latest tag name:
+- Latest tag and commit:
 
 ```shell
-git describe --tags --abbrev=0
-```
-
-- Latest commit hash:
-
-```shell
-git rev-parse --short HEAD
+git log -1 --decorate=short
 ```
 
 ## Credits

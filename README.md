@@ -43,7 +43,7 @@ require("githead"):setup({
     "staged",
     "unstaged",
     "untracked",
-  }
+  },
 
   show_branch = true,
   branch_prefix = "on",

@@ -12,6 +12,25 @@ All supported features are listed [here](#features). More presets are available 
 - yazi version >= [917e1f5](https://github.com/sxyazi/yazi/commit/917e1f54a10445f2e25147c4b81a3c77d8233632).
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
+## Compatibility
+
+To keep the plugin up to date, there are two branches: `main` and `nightly`.
+The `main` branch follows major yazi releases, while `nightly` is linked to specific yazi commits or changes.
+
+This setup allows shipping stable versions on time, while giving early access to "cutting-edge" changes. See matrix below.
+
+<details close>
+<summary>Compatibility matrix</summary>
+
+|                                  githead                                  | yazi                                                                                      |
+| :-----------------------------------------------------------------------: | ----------------------------------------------------------------------------------------- |
+| [v2.0.1](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.1) | [917e1f5](https://github.com/sxyazi/yazi/commit/917e1f54a10445f2e25147c4b81a3c77d8233632) |
+| [v2.0.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.0) | [693dff2](https://github.com/sxyazi/yazi/commit/693dff25e3165e357cc9d0b94ca3f2b176741a36) |
+| [v1.7.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.7.0) | [693dff2](https://github.com/sxyazi/yazi/tree/693dff25e3165e357cc9d0b94ca3f2b176741a36)   |
+| [v1.6.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.6.0) | [v25.5.31](https://github.com/sxyazi/yazi/releases/tag/v25.5.31)                          |
+
+</details>
+
 ## Installation
 
 1. Using yazi package manager
@@ -287,7 +306,7 @@ require("githead"):setup({
 
 - Vibrant (Full)
 
-  ![preview-vibrant-full](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-vibrant-separated.png)
+  ![preview-vibrant-full](https://github.com/llanosrocas/githead.yazi/blob/main/.github/images/preview-vibrant-full.png)
 
   <details>
   <summary>Config</summary>

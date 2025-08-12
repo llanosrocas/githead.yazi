@@ -247,35 +247,42 @@ return {
 
     --- @param data GitStatusData
     function Header:render_state(data)
-      if data.unmerged_count then
+      local state_prefix = data.state_prefix
+      local unmerged_count = data.unmerged_count
+      local rebase_done = data.rebase_done
+      local rebase_total = data.rebase_total
+
+      if state_prefix then
         local state_label = ""
-
-        if config.show_state_prefix and data.state_prefix then
-          state_label = data.state_prefix
-
+        if config.show_state_prefix then
+          state_label = state_prefix
           if
-            data.state_prefix == "rebase"
+            state_prefix == "rebase"
             and config.show_numbers
-            and data.rebase_done
+            and rebase_done
+            and rebase_total
           then
             state_label = state_label
               .. " "
-              .. data.rebase_done
+              .. rebase_done
               .. "/"
-              .. data.unmerged_count
+              .. rebase_total
           end
-
-          state_label = state_label .. " "
         end
 
-        local unmerged_label = config.show_numbers and data.unmerged_count or ""
+        local unmerged_label = ""
+        local symbol = ""
 
-        return ui.Span(state_label .. config.state_symbol .. unmerged_label)
+        if unmerged_count and unmerged_count > 0 then
+          symbol = " " .. config.state_symbol
+          if config.show_numbers then
+            unmerged_label = tostring(unmerged_count)
+          end
+        end
+
+        return ui.Span(state_label .. symbol .. unmerged_label)
           :fg(config.state_color)
-      elseif data.state_prefix == "bisect" then
-        return ui.Span("bisect"):fg(config.state_color)
       end
-
       return nil
     end
 
@@ -457,18 +464,15 @@ return {
     --- @param status string
     local get_state = function(status)
       local unmerged = status:match("Unmerged paths:%s*(.-)%s*\n\n")
-
       if unmerged then
         local filtered_unmerged =
           unmerged:gsub("^[%s]*%b()[%s]*", ""):gsub("^[%s]*%b()[%s]*", "")
-
         local count = 0
         for line in filtered_unmerged:gmatch("[^\r\n]+") do
           if line:match("%S") then
             count = count + 1
           end
         end
-
         data.unmerged_count = count
       end
 
@@ -478,10 +482,18 @@ return {
         data.state_prefix = "cherry"
       elseif status:find("git rebase") then
         data.state_prefix = "rebase"
-        data.rebase_done = status:match("%((%d+) com.- done%)")
+        local commands_done = status:match("%((%d+) commands? done%)")
+        if commands_done then
+          data.rebase_done = commands_done
+          if not data.unmerged_count then
+            data.rebase_total = commands_done
+          else
+            data.rebase_total = data.unmerged_count
+          end
+        end
       elseif status:find("git revert") then
         data.state_prefix = "revert"
-      elseif not unmerged and status:find("git bisect") then
+      elseif status:find("git bisect") then
         data.state_prefix = "bisect"
       end
     end

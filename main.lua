@@ -257,7 +257,7 @@ return {
         if config.show_state_prefix then
           state_label = state_prefix
           if
-            state_prefix == "rebase"
+            state_prefix == "rebase-i"
             and config.show_numbers
             and rebase_done
             and rebase_total
@@ -428,7 +428,7 @@ return {
     ---@field remote_repo? string
     ---@field staged? string
     ---@field stashes? integer
-    ---@field state_prefix? "bisect"|"cherry"|"merge"|"rebase"|"revert"
+    ---@field state_prefix? "bisect"|"cherry"|"merge"|"rebase-i"|"revert"
     ---@field tag? string
     ---@field unmerged_count? integer
     ---@field unstaged? string
@@ -481,7 +481,7 @@ return {
       elseif status:find("git cherry%-pick") then
         data.state_prefix = "cherry"
       elseif status:find("git rebase") then
-        data.state_prefix = "rebase"
+        data.state_prefix = "rebase-i"
         local commands_done = status:match("%((%d+) commands? done%)")
         if commands_done then
           data.rebase_done = commands_done

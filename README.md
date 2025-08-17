@@ -22,12 +22,13 @@ This setup allows shipping stable versions on time, while giving early access to
 <details close>
 <summary>Compatibility matrix</summary>
 
-|                                  githead                                  | yazi                                                                                      |
-| :-----------------------------------------------------------------------: | ----------------------------------------------------------------------------------------- |
-| [v2.0.1](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.1) | [917e1f5](https://github.com/sxyazi/yazi/commit/917e1f54a10445f2e25147c4b81a3c77d8233632) |
-| [v2.0.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.0) | [693dff2](https://github.com/sxyazi/yazi/commit/693dff25e3165e357cc9d0b94ca3f2b176741a36) |
-| [v1.7.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.7.0) | [693dff2](https://github.com/sxyazi/yazi/tree/693dff25e3165e357cc9d0b94ca3f2b176741a36)   |
-| [v1.6.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.6.0) | [v25.5.31](https://github.com/sxyazi/yazi/releases/tag/v25.5.31)                          |
+|                                                  githead                                                  | yazi                                                                                      |
+| :-------------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------------------------- |
+| [v2.0.2-nightly.292d37c](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.2-nightly.292d37c) | [292d37c](https://github.com/sxyazi/yazi/commit/292d37ccde5fb09dc7318247caf552213d16ec36) |
+|                 [v2.0.1](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.1)                 | [917e1f5](https://github.com/sxyazi/yazi/commit/917e1f54a10445f2e25147c4b81a3c77d8233632) |
+|                 [v2.0.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.0)                 | [693dff2](https://github.com/sxyazi/yazi/commit/693dff25e3165e357cc9d0b94ca3f2b176741a36) |
+|                 [v1.7.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.7.0)                 | [693dff2](https://github.com/sxyazi/yazi/tree/693dff25e3165e357cc9d0b94ca3f2b176741a36)   |
+|                 [v1.6.0](https://github.com/llanosrocas/githead.yazi/releases/tag/v1.6.0)                 | [v25.5.31](https://github.com/sxyazi/yazi/releases/tag/v25.5.31)                          |
 
 </details>
 

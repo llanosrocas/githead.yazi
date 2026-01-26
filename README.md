@@ -9,7 +9,7 @@ All supported features are listed [here](#features). More presets are available 
 
 ## Requirements
 
-- yazi version >= [917e1f5](https://github.com/sxyazi/yazi/commit/917e1f54a10445f2e25147c4b81a3c77d8233632).
+- yazi version >= [26.1.22](https://github.com/sxyazi/yazi/releases/tag/v26.1.22).
 - Font with symbol support. For example [Nerd Fonts](https://www.nerdfonts.com/).
 
 ## Compatibility
@@ -24,6 +24,7 @@ This setup allows shipping stable versions on time, while giving early access to
 
 |                                                  githead                                                  | yazi                                                                                      |
 | :-------------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------------------------- |
+|                 [v2.0.2](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.2)                 | [v26.1.22](https://github.com/sxyazi/yazi/releases/tag/v26.1.22)                          |
 |                 [v2.0.2](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.2)                 | [v25.12.29](https://github.com/sxyazi/yazi/releases/tag/v25.12.29)                        |
 | [v2.0.2-nightly.292d37c](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.2-nightly.292d37c) | [2f66561](https://github.com/sxyazi/yazi/commit/2f66561a8251f8788b2b0fd366af90555ecafc86) |
 | [v2.0.2-nightly.292d37c](https://github.com/llanosrocas/githead.yazi/releases/tag/v2.0.2-nightly.292d37c) | [6cfa92f](https://github.com/sxyazi/yazi/commit/6cfa92f11205d212155579b5b76d4cbabe723829) |
